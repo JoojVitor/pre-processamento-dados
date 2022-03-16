@@ -6,6 +6,7 @@ doenca_pre.head()
 doenca_pre.shape
 
 from collections import Counter
+
 Counter(doenca_pre.cs_sexo)
 doenca_pre['cs_sexo'].value_counts()
 
@@ -21,6 +22,7 @@ relacao = doenca_pre.loc[doenca_pre.cs_sexo != 'IGNORADO']
 relacao = relacao.loc[relacao.cs_sexo != 'INDEFINIDO']
 relacao['cs_sexo'].value_counts()
 import plotly.express as px
+
 px.pie(relacao, names="cs_sexo")
 
 # Análise dos óbitos
@@ -31,7 +33,7 @@ px.pie(relacao, names="obito")
 relacao.dtypes
 
 # Renomeando os registros da variável obito
-relacao["obito"] = relacao["obito"].replace({0:"nao", 1:"sim"})
+relacao["obito"] = relacao["obito"].replace({0: "nao", 1: "sim"})
 relacao.head()
 relacao.dtypes
 relacao.obito.value_counts()
