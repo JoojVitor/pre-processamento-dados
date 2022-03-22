@@ -1,16 +1,11 @@
 import numpy as np
 import pandas as pd
-
-doenca_pre = pd.read_csv('casos_obitos_doencas_preexistentes.csv', sep=';', encoding='utf-8')
-doenca_pre.head()
-doenca_pre.shape
+import plotly.express as px
 
 from collections import Counter
+from regressao_logistica import logistic_regression
 
-Counter(doenca_pre.cs_sexo)
-doenca_pre['cs_sexo'].value_counts()
-
-doenca_pre.isnull().sum()
+doenca_pre = pd.read_csv('casos_obitos_doencas_preexistentes.csv', sep=';', encoding='utf-8')
 
 # Excluir valor NAN de cs_sexo
 doenca_pre.dropna(subset=['cs_sexo'], inplace=True)
@@ -20,24 +15,14 @@ relacao = doenca_pre.loc[doenca_pre.cs_sexo != 'IGNORADO']
 
 # Excluir Indefinido
 relacao = relacao.loc[relacao.cs_sexo != 'INDEFINIDO']
-relacao['cs_sexo'].value_counts()
-import plotly.express as px
 
-px.pie(relacao, names="cs_sexo")
-
-# Análise dos óbitos
-relacao.obito.value_counts()
-px.pie(relacao, names="obito")
-
-# Análise da classificação dos atributos
-relacao.dtypes
+relacao = relacao.loc[relacao.idade != 'NA']
 
 # Renomeando os registros da variável obito
-relacao["obito"] = relacao["obito"].replace({0: "nao", 1: "sim"})
-relacao.head()
-relacao.dtypes
-relacao.obito.value_counts()
+relacao["cs_sexo"] = relacao["cs_sexo"].replace({'MASCULINO': 0, 'FEMININO': 1})
+relacao["diagnostico_covid19"] = relacao["diagnostico_covid19"].replace({'CONFIRMADO': 1})
 
-# Transformando em variáveis categóricas
-relacao['cs_sexo'] = relacao['cs_sexo'].astype('category')
-relacao['obito'] = relacao['obito'].astype('category')
+X = relacao[["cs_sexo", "diagnostico_covid19"]]
+y = relacao["obito"]
+
+logistic_regression(X, y)
